@@ -528,3 +528,12 @@ export default function VideoMeetComponent() {
         cameraRef.current = camera;
     };
 
+    const stopGestureDetection = () => {
+        cameraRef.current?.stop();
+        cameraRef.current = null;
+        handsRef.current?.close();
+        handsRef.current = null;
+        gestureInitializedRef.current = false;
+    };
+    // ──────────────────────────────────────────────────────────────────────────
+

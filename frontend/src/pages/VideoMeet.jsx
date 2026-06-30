@@ -1111,3 +1111,43 @@ let connectToSocketServer = () => {
     })
 }
 
+let gotMessageFromServer = (fromId, message) => {
+    const signal = JSON.parse(message)
+    if (fromId === socketIdRef.current) return
+
+    if (!connections[fromId]) {
+        if (!iceCandidateQueue[fromId]) iceCandidateQueue[fromId] = []
+        if (signal.ice) iceCandidateQueue[fromId].push(signal.ice)
+        return
+    }
+
+    if (signal.sdp) {
+        connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp))
+            .then(() => {
+                if (iceCandidateQueue[fromId]?.length > 0) {
+                    iceCandidateQueue[fromId].forEach(c =>
+                        connections[fromId].addIceCandidate(new RTCIceCandidate(c))
+                            .catch(e => console.log(e))
+                    )
+                    iceCandidateQueue[fromId] = []
+                }
+                if (signal.sdp.type === 'offer') {
+                    return connections[fromId].createAnswer()
+                        .then(desc => connections[fromId].setLocalDescription(desc))
+                        .then(() => socketRef.current.emit('signal', fromId,
+                            JSON.stringify({ sdp: connections[fromId].localDescription })))
+                }
+            })
+            .catch(e => console.log(e))
+    }
+
+    if (signal.ice) {
+        if (connections[fromId].remoteDescription?.type) {
+            connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice))
+                .catch(e => console.log(e))
+        } else {
+            iceCandidateQueue[fromId].push(signal.ice)
+        }
+    }
+}
+

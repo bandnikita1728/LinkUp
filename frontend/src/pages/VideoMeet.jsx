@@ -649,3 +649,21 @@ export default function VideoMeetComponent() {
         }
     }
 
+    const checkAudioEnergy = async (blob) => {
+        try {
+            const arrayBuffer = await blob.arrayBuffer()
+            const audioContext = new AudioContext()
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+            const data = audioBuffer.getChannelData(0)
+            let sum = 0
+            for (let i = 0; i < data.length; i++) sum += data[i] * data[i]
+            const rms = Math.sqrt(sum / data.length)
+            console.log('[SARVAM] Audio RMS energy:', rms.toFixed(4))
+            await audioContext.close()
+            return rms > 0.02
+        } catch(e) {
+            console.log('[SARVAM] VAD check failed:', e.message)
+            return true
+        }
+    }
+

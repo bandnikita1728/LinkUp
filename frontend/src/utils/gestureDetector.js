@@ -48,3 +48,21 @@ export const detectGesture = (landmarks) => {
     const fingerHeartDist = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y)
     const isFingerHeart = fingerHeartDist < handSize * 0.35 && middleUp && ringUp
 
+    let detected = null
+
+    if (isFingerHeart) {
+        detected = { emoji: '❤️', effect: 'realhearts', name: 'finger_heart' }
+    } else if (thumbPointingUp && !indexUp && !middleUp && !ringUp && !pinkyUp) {
+        detected = { emoji: '👍', effect: 'confetti', name: 'thumbs_up' }
+    } else if (indexUp && middleUp && !ringUp && !pinkyUp) {
+        detected = { emoji: '🎈', effect: 'balloons', name: 'peace' }
+    } else if (indexUp && middleUp && ringUp && pinkyUp) {
+        detected = { emoji: '👋', effect: 'wave', name: 'open_palm' }
+    } else if (thumbOut && !indexUp && !middleUp && !ringUp && pinkyUp) {
+        detected = { emoji: '🤙', effect: 'hearts', name: 'hang_loose' }
+    } else if (!thumbPointingUp && !indexUp && !middleUp && !ringUp && !pinkyUp) {
+        detected = { emoji: '👊', effect: 'smashfire', name: 'fist' }
+    } else if (!thumbOut && indexUp && !middleUp && !ringUp && !pinkyUp) {
+        detected = { emoji: '☝️', effect: 'fire', name: 'point' }
+    }
+

@@ -1,0 +1,276 @@
+/* ===== LANDING PAGE ===== */
+
+.landingPageContainer {
+width: 100vw;
+min-height: 100vh;
+background-color: #0A0A0F;
+color: white;
+}
+
+/* Navbar */
+.landingNav {
+position: fixed;
+top: 0;
+width: 100%;
+z-index: 100;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 1rem 3rem;
+background: rgba(10, 10, 15, 0.85);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid #1F1F2E;
+box-sizing: border-box;
+}
+
+.landingNavLogo {
+font-family: 'Space Grotesk', sans-serif;
+font-size: 1.5rem;
+font-weight: 700;
+color: #4F8EF7;
+margin: 0;
+}
+
+.landingNavLinks {
+display: flex;
+align-items: center;
+gap: 1rem;
+}
+
+.landingNavGhost {
+background: transparent;
+border: none;
+color: #9CA3AF;
+font-size: 0.95rem;
+padding: 8px 16px;
+cursor: pointer;
+font-family: 'Inter', sans-serif;
+transition: color 0.2s;
+}
+
+.landingNavGhost:hover {
+color: #ffffff;
+}
+
+.landingNavBtn {
+background: #4F8EF7;
+border: none;
+color: white;
+font-size: 0.95rem;
+font-weight: 600;
+padding: 8px 20px;
+border-radius: 8px;
+cursor: pointer;
+font-family: 'Inter', sans-serif;
+transition: background 0.2s;
+}
+
+.landingNavBtn:hover {
+background: #3a7ad4;
+}
+
+/* Hero */
+.landingHero {
+display: flex;
+align-items: center;
+justify-content: space-between;
+min-height: 100vh;
+padding: 0 3rem;
+padding-top: 80px;
+gap: 2rem;
+}
+
+.landingHeroLeft {
+flex: 1.2;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+}
+
+.landingBadge {
+display: inline-block;
+border: 1px solid #4F8EF7;
+color: #4F8EF7;
+border-radius: 999px;
+padding: 4px 14px;
+font-size: 0.8rem;
+font-family: 'Inter', sans-serif;
+margin-bottom: 1.5rem;
+}
+
+.landingHeroTitle {
+font-family: 'Space Grotesk', sans-serif;
+font-size: 3.5rem;
+font-weight: 700;
+line-height: 1.1;
+color: #ffffff;
+margin-bottom: 1rem;
+}
+
+.landingGradientText {
+background: linear-gradient(90deg, #4F8EF7, #7C3AED);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.landingHeroSub {
+font-family: 'Inter', sans-serif;
+font-size: 1.1rem;
+color: #9CA3AF;
+margin-bottom: 2rem;
+max-width: 500px;
+line-height: 1.6;
+}
+
+.landingHeroBtns {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.landingBtnPrimary {
+background: linear-gradient(135deg, #4F8EF7, #7C3AED);
+color: white;
+border: none;
+border-radius: 8px;
+padding: 12px 28px;
+font-size: 1rem;
+font-weight: 600;
+font-family: 'Inter', sans-serif;
+cursor: pointer;
+text-decoration: none;
+display: inline-block;
+transition: opacity 0.2s;
+}
+
+.landingBtnPrimary:hover {
+opacity: 0.88;
+}
+
+.landingBtnOutline {
+background: transparent;
+color: #4F8EF7;
+border: 1px solid #4F8EF7;
+border-radius: 8px;
+padding: 12px 28px;
+font-size: 1rem;
+font-weight: 600;
+font-family: 'Inter', sans-serif;
+cursor: pointer;
+transition: background 0.2s;
+}
+
+.landingBtnOutline:hover {
+background: rgba(79, 142, 247, 0.08);
+}
+
+.landingHeroRight {
+flex: 1;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.landingHeroImg {
+max-width: 380px;
+width: 100%;
+height: auto;
+filter: drop-shadow(0 0 50px rgba(79, 142, 247, 0.25));
+animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+0%, 100% { transform: translateY(0px); }
+50% { transform: translateY(-16px); }
+}
+
+/* Features */
+.landingFeatures {
+display: flex;
+gap: 1.5rem;
+padding: 5rem 3rem;
+background: #0A0A0F;
+}
+
+.landingFeatureCard {
+flex: 1;
+background: #13131A;
+border: 1px solid #1F1F2E;
+border-radius: 12px;
+padding: 2rem;
+text-align: center;
+transition: all 0.25s ease;
+color: white;
+}
+
+.landingFeatureCard:hover {
+border-color: #4F8EF7;
+transform: translateY(-4px);
+}
+
+.landingFeatureIcon {
+font-size: 2rem;
+margin-bottom: 0.75rem;
+}
+
+.landingFeatureCard h3 {
+font-family: 'Space Grotesk', sans-serif;
+font-size: 1.15rem;
+margin-bottom: 0.5rem;
+color: #ffffff;
+}
+
+.landingFeatureCard p {
+color: #9CA3AF;
+font-size: 0.95rem;
+margin: 0;
+line-height: 1.5;
+}
+
+/* ===== HOME / DASHBOARD ===== */
+
+.navBar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 1rem 2rem;
+background: rgba(10, 10, 15, 0.95);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid #1F1F2E;
+position: sticky;
+top: 0;
+z-index: 50;
+}
+
+.meetContainer {
+display: flex;
+padding: 0 3rem;
+min-height: calc(100vh - 65px);
+gap: 6vw;
+justify-content: center;
+align-items: center;
+background: #0A0A0F;
+}
+
+.leftPanel {
+display: flex;
+align-items: center;
+flex: 1;
+max-width: 500px;
+}
+
+.rightPanel {
+display: flex;
+align-items: center;
+justify-content: center;
+flex: 1;
+}
+
+.rightPanel > img {
+width: 30vw;
+max-width: 400px;
+height: auto;
+border-radius: 20px;
+filter: drop-shadow(0 0 40px rgba(79, 142, 247, 0.2));
+}

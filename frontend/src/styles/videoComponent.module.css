@@ -1,0 +1,825 @@
+.meetVideoContainer {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    background: rgb(1, 4, 48);
+    overflow: hidden;
+}
+
+.lobbyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 40px;
+}
+
+.lobbyPreview video {
+    width: 320px;
+    border-radius: 12px;
+    margin-top: 16px;
+}
+
+.conferenceView {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 100vh;
+    gap: 4px;
+    background: rgb(1, 4, 48);
+    align-items: center;
+    justify-content: center;
+}
+
+.videoWrapper {
+    flex: 1 1 45%;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #111;
+    position: relative;
+    transition: box-shadow 0.2s ease;
+}
+
+.speaking {
+    box-shadow: 0 0 0 4px #4ade80, 0 0 20px rgba(74, 222, 128, 0.6) !important;
+    border-radius: 12px;
+    transition: box-shadow 0.15s ease;
+}
+
+.speakingLocal {
+    box-shadow: 0 0 0 4px #4ade80, 0 0 20px rgba(74, 222, 128, 0.6) !important;
+    border-radius: 14px;
+    transition: box-shadow 0.15s ease;
+}
+
+.videoWrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+}
+
+.conferenceView:has(.videoWrapper:only-child) .videoWrapper {
+    flex: 1 1 100%;
+    max-height: 100vh;
+}
+
+.waitingMessage {
+    color: rgba(255,255,255,0.4);
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.meetUserVideo {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 200px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+    z-index: 10;
+    background: #000;
+}
+
+.buttonContainers {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0 14px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    z-index: 20;
+}
+
+.buttonContainers svg {
+    font-size: 2rem;
+}
+
+.chatRoom {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100vh;
+    background: #fff;
+    border-left: 1px solid #ddd;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.chatHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.chatHeader h1 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #222;
+}
+
+.chattingDisplay {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 12px;
+}
+
+.messageItem {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.messageSender {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #1a73e8;
+    margin: 0 0 2px;
+}
+
+.messageText {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #111;
+    word-break: break-word;
+}
+
+.noMessages {
+    color: #aaa;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.chattingArea {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.chattingArea button {
+    white-space: nowrap;
+}
+
+.participantCount {
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 20;
+}
+
+.meetingTimer {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    z-index: 20;
+    letter-spacing: 1px;
+}
+
+.copyLinkBtn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 20;
+    transition: background 0.2s;
+}
+.copyLinkBtn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.videoNameTag {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.reactionsContainer {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    z-index: 50;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.floatingReaction {
+    font-size: 2.5rem;
+    animation: floatUp 3s ease-out forwards;
+    display: block;
+}
+
+@keyframes floatUp {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-200px) scale(1.5); }
+}
+
+/* ── Gesture effect floating emoji particles ─────────────────────────── */
+.floatingEmojiContainer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 60;
+}
+
+.floatingEmoji {
+    position: absolute;
+    bottom: -10%;
+    animation: floatEmoji 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    user-select: none;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
+    opacity: 0.92;
+}
+
+/* Balloons float up much slower with a gentle sway */
+.balloon {
+    animation: balloonRise 6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes floatEmoji {
+    0%   { bottom: 8%;  opacity: 0; transform: scale(0.8)  rotate(-5deg); }
+    15%  {              opacity: 1; transform: scale(1.05) rotate(3deg); }
+    50%  {              opacity: 1; transform: scale(1)    rotate(-2deg); }
+    85%  {              opacity: 0.8; transform: scale(0.95) rotate(2deg); }
+    100% { bottom: 88%; opacity: 0; transform: scale(0.85) rotate(-3deg); }
+}
+
+@keyframes balloonRise {
+    0%   { bottom: 5%;  opacity: 0; transform: scale(0.9) rotate(-8deg); }
+    10%  {              opacity: 1; transform: scale(1.05) rotate(5deg); }
+    30%  {              transform: scale(1.02) rotate(-4deg); }
+    60%  {              transform: scale(1.04) rotate(3deg);  opacity: 1; }
+    85%  {              opacity: 0.7; transform: scale(1)   rotate(-3deg); }
+    100% { bottom: 92%; opacity: 0; transform: scale(0.9)  rotate(5deg); }
+}
+
+/* Fist fire blast floating emojis */
+.fireEmoji {
+    animation: fireBlast 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    filter: drop-shadow(0 0 12px rgba(255, 100, 0, 0.8));
+}
+
+@keyframes fireBlast {
+    0%   { bottom: 3%;  opacity: 0; transform: scale(0.3) rotate(-15deg); }
+    10%  {              opacity: 1; transform: scale(1.4) rotate(8deg); }
+    30%  {              transform: scale(1.1) rotate(-5deg); }
+    60%  {              transform: scale(1.2) rotate(6deg);  opacity: 1; }
+    100% { bottom: 85%; opacity: 0; transform: scale(0.7) rotate(-8deg); }
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-5px); }
+    80%      { transform: translateX(5px); }
+}
+
+/* Finger heart floating hearts */
+.heartEmoji {
+    animation: heartFloat 5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    filter: drop-shadow(0 0 8px rgba(255, 100, 130, 0.6));
+}
+
+@keyframes heartFloat {
+    0%   { bottom: 5%;  opacity: 0; transform: scale(0.5) rotate(-10deg); }
+    15%  {              opacity: 1; transform: scale(1.2) rotate(5deg); }
+    40%  {              transform: scale(1.0) rotate(-3deg); }
+    70%  {              transform: scale(1.1) rotate(4deg);  opacity: 1; }
+    100% { bottom: 90%; opacity: 0; transform: scale(0.8) rotate(-5deg); }
+}
+
+/* Full-screen gesture reaction overlay */
+.gestureOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 100;
+    animation: gestureFade 2.5s ease-out forwards;
+}
+
+.gestureEmoji {
+    font-size: 18vw;
+    filter: drop-shadow(0 0 40px rgba(255,255,255,0.5));
+    animation: gesturePop 2.5s ease-out forwards;
+    display: block;
+}
+
+@keyframes gestureFade {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ── Reaction picker panel ──────────────────────────────────────────────── */
+.reactionPickerPanel {
+    position: absolute;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 15, 35, 0.96);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 16px;
+    z-index: 50;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    min-width: 280px;
+}
+
+.confettiToggleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.confettiLabel {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.toggleSwitch {
+    width: 42px;
+    height: 24px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.25s;
+}
+
+.toggleOn {
+    background: #4ade80;
+}
+
+.toggleKnob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.toggleOn .toggleKnob {
+    transform: translateX(18px);
+}
+
+.pickerDivider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin-bottom: 12px;
+}
+
+.emojiGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.emojiPickerBtn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 8px 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.15s, transform 0.15s;
+}
+
+.emojiPickerBtn:hover {
+    background: rgba(255,255,255,0.14);
+    transform: scale(1.08);
+}
+
+.emojiIcon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.emojiPickerLabel {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.62rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@keyframes gesturePop {
+    0%   { transform: scale(0.3) rotate(-10deg); }
+    20%  { transform: scale(1.15) rotate(5deg); }
+    35%  { transform: scale(1) rotate(0deg); }
+    80%  { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.3) rotate(0deg); }
+}
+
+/* ── Live captions + translation ─────────────────────────────────────────── */
+.myCaption {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.78);
+    color: #4ade80;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    max-width: 65%;
+    text-align: center;
+    z-index: 25;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.captionOverlay {
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.78);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    max-width: 90%;
+    text-align: center;
+    z-index: 15;
+    pointer-events: none;
+    white-space: normal;
+    word-wrap: break-word;
+    max-height: 80px;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+.langPanel {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(12, 12, 30, 0.97);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 55;
+    min-width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+
+.langPanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.langPanelClose {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.langPanelClose:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.langRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.langLabel {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.85rem;
+    min-width: 110px;
+}
+
+.langSelect {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.langSelect:focus {
+    border-color: rgba(74, 222, 128, 0.5);
+}
+
+.langSelect option {
+    background: #1a1a2e;
+    color: white;
+}
+
+.langToggle {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+.langToggleBtn {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.langToggleBtn:hover {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.langToggleActive {
+    background: rgba(74, 222, 128, 0.2) !important;
+    color: #4ade80 !important;
+    border-color: rgba(74, 222, 128, 0.4) !important;
+    font-weight: 600;
+}
+
+.langHint {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.75rem;
+    text-align: center;
+    margin: 0;
+}
+
+/* ── Translation Panel ───────────────────────────────────────────────────── */
+.translationPanel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 340px;
+    background: rgba(12, 12, 30, 0.97);
+    backdrop-filter: blur(16px);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    z-index: 40;
+}
+
+.translationPanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.chatCloseBtn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.chatCloseBtn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.translationSettings {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.translationLangRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.translationLangLabel {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.82rem;
+    min-width: 80px;
+}
+
+.translationSelect {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.translationSelect option {
+    background: #1a1a2e;
+    color: white;
+}
+
+.translationStartBtn {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    text-align: center;
+}
+
+.translationStartBtn:hover {
+    background: rgba(74, 222, 128, 0.25);
+}
+
+.translationStartBtnActive {
+    background: rgba(255, 80, 80, 0.15) !important;
+    color: #ff6b6b !important;
+    border-color: rgba(255, 80, 80, 0.3) !important;
+}
+
+.translationMessages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.translationMessages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.translationMessages::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+}
+
+.translationEmpty {
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+    margin-top: 40px;
+    line-height: 1.8;
+}
+
+.transcriptMessage {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border-left: 3px solid rgba(74, 222, 128, 0.4);
+}
+
+.transcriptMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.transcriptSender {
+    color: #4ade80;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.transcriptTime {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.72rem;
+}
+
+.transcriptText {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.translationClearBtn {
+    margin: 8px 16px 12px;
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+.translationClearBtn:hover {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+}

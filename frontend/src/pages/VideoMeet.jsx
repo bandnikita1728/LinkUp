@@ -687,3 +687,70 @@ export default function VideoMeetComponent() {
         return BLOCKED_WORDS.some(word => lower.includes(word))
     }
 
+    const startTranslation = async () => {
+        try {
+            const micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+
+            translationOnRef.current = true
+            setTranslationOn(true)
+
+            const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:9000'
+
+            const record = () => {
+                if (!translationOnRef.current) {
+                    micStream.getTracks().forEach(t => t.stop())
+                    return
+                }
+
+                const recorder = new MediaRecorder(micStream)
+                const chunks = []
+
+                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data) }
+
+                recorder.onstop = async () => {
+                    const blob = new Blob(chunks, { type: recorder.mimeType })
+                    console.log('[SARVAM] Blob:', blob.size, blob.type)
+
+                    if (blob.size < 500) {
+                        if (translationOnRef.current) setTimeout(record, 100)
+                        return
+                    }
+
+                    const isSpeaking = await checkAudioEnergy(blob)
+                    if (!isSpeaking) {
+                        console.log('[SARVAM] Skipping silent chunk')
+                        if (translationOnRef.current) setTimeout(record, 100)
+                        return
+                    }
+
+                    try {
+                        const fd = new FormData()
+                        fd.append('file', blob, 'audio.webm')
+                        fd.append('language', myLangRef.current || 'hi-IN')
+                        fd.append('targetLang', showInLangRef.current || 'en')
+                        const res = await fetch(`${serverUrl}/api/translate-audio`, { method: 'POST', body: fd })
+                        const data = await res.json()
+                        console.log('[SARVAM] Translated:', data.translated)
+                        if (data.translated?.trim() && !isHallucination(data.translated) && !containsBlockedWord(data.translated)) {
+                            socketRef.current?.emit('caption', data.translated, socketIdRef.current)
+                            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                            setTranscriptMessages(prev => [...prev, { id: Date.now(), socketId: 'me', sender: '🎤 You', text: data.translated, timestamp: time }])
+                        }
+                    } catch(err) { console.log('[SARVAM] Error:', err.message) }
+
+                    if (translationOnRef.current) setTimeout(record, 100)
+                }
+
+                recorder.start()
+                translationRecorderRef.current = recorder
+                setTimeout(() => { if (recorder.state === 'recording') recorder.stop() }, 2000)
+            }
+
+            record()
+
+        } catch(e) {
+            console.log('[SARVAM] getUserMedia failed:', e.message)
+            alert('Microphone access needed for translation')
+        }
+    }
+

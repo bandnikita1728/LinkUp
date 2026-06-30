@@ -286,3 +286,186 @@ export default function VideoMeetComponent() {
         return batch;
     };
 
+    const triggerEffect = (effect, emoji) => {
+        if (!emoji || emoji.length > 10) return  // guard against socket IDs passed as emoji
+        console.log('[effect] triggerEffect called:', effect, emoji);
+        console.log('[effect] floatingEmojis before:', floatingEmojis.length);
+
+        // ── Floating emoji particles ──────────────────────────────────────────
+        // balloons and realhearts manage their own batches below; others get a small generic batch
+        if (effect !== 'balloons' && effect !== 'realhearts' && effect !== 'smashfire') {
+            const count = 4;
+            const batch = Array.from({ length: count }, (_, i) => ({
+                id: Date.now() + i,
+                emoji,
+                x: Math.random() * 70 + 15,
+                delay: Math.random() * 1.0,
+                size: Math.random() * 1.0 + 1.8,
+            }));
+            setFloatingEmojis(prev => [...prev, ...batch]);
+            setTimeout(() => {
+                setFloatingEmojis(prev => prev.filter(e => !batch.find(n => n.id === e.id)));
+            }, 4000);
+        }
+
+        // ❤️ Hearts (hang-loose) + 🫰 Finger heart — shared soft burst
+        if (effect === 'hearts' || effect === 'realhearts') {
+            // Floating heart emojis
+            const heartEmojis = ['❤️', '🩷', '💕', '🩷', '💗'].map((e, i) => ({
+                id: Date.now() + 200 + i,
+                emoji: e,
+                x: 20 + i * 15 + Math.random() * 5,
+                delay: i * 0.25,
+                size: Math.random() * 1.2 + 2.2,
+            }));
+            setFloatingEmojis(prev => [...prev, ...heartEmojis]);
+            setTimeout(() => {
+                setFloatingEmojis(prev => prev.filter(e => !heartEmojis.find(n => n.id === e.id)));
+            }, 5000);
+
+            confetti({
+                particleCount: 25, spread: 50,
+                origin: { y: 0.6, x: 0.5 },
+                shapes: ['circle'],
+                colors: ['#ff6b9d', '#ff8fab', '#ffc2d1', '#ff4d6d'],
+                scalar: 0.8, gravity: 0.5, drift: 0.3,
+            });
+            setTimeout(() => confetti({
+                particleCount: 15, spread: 40,
+                origin: { y: 0.5, x: 0.3 },
+                shapes: ['circle'],
+                colors: ['#ff6b9d', '#ffc2d1'],
+                scalar: 0.7, gravity: 0.4,
+            }), 400);
+        }
+
+        // 🎈 Balloons — evenly spaced slow rise + very gentle pop
+        if (effect === 'balloons') {
+            const balloonEmojis = ['🎈', '🎈', '🎀', '🎊'].map((e, i) => ({
+                id: Date.now() + 500 + i,
+                emoji: e,
+                x: 20 + i * 20 + Math.random() * 6,
+                delay: i * 0.4,
+                size: Math.random() * 0.8 + 2.0,
+            }));
+            setFloatingEmojis(prev => [...prev, ...balloonEmojis]);
+            setTimeout(() => {
+                setFloatingEmojis(prev => prev.filter(e => !balloonEmojis.find(n => n.id === e.id)));
+            }, 6000);
+
+            confetti({
+                particleCount: 20, spread: 60,
+                origin: { y: 0.85, x: 0.5 },
+                colors: ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff922b'],
+                gravity: 0.3, scalar: 0.75, drift: 0.4,
+            });
+        }
+
+        // 🎉 Confetti — celebratory but restrained
+        if (effect === 'confetti') {
+            confetti({
+                particleCount: 60, spread: 80,
+                origin: { y: 0.6, x: 0.5 },
+                colors: ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#c77dff'],
+                scalar: 0.85, gravity: 0.65,
+            });
+            setTimeout(() => {
+                confetti({
+                    particleCount: 25, angle: 60, spread: 40,
+                    origin: { x: 0.1, y: 0.65 },
+                    colors: ['#ff6b6b', '#ffd93d'], scalar: 0.75,
+                });
+                confetti({
+                    particleCount: 25, angle: 120, spread: 40,
+                    origin: { x: 0.9, y: 0.65 },
+                    colors: ['#6bcb77', '#c77dff'], scalar: 0.75,
+                });
+            }, 400);
+        }
+
+        // 🔥 Fire (index point) — subtle sparks
+        if (effect === 'fire') {
+            confetti({
+                particleCount: 40, angle: 90, spread: 45,
+                origin: { y: 0.95, x: 0.5 },
+                colors: ['#ff4500', '#ff6600', '#ff8c00', '#ffd700'],
+                gravity: 0.55, scalar: 0.9, shapes: ['circle'],
+            });
+            setTimeout(() => {
+                confetti({
+                    particleCount: 20, angle: 75, spread: 35,
+                    origin: { y: 0.95, x: 0.25 },
+                    colors: ['#ff4500', '#ffd700'], gravity: 0.6, scalar: 0.8,
+                });
+                confetti({
+                    particleCount: 20, angle: 105, spread: 35,
+                    origin: { y: 0.95, x: 0.75 },
+                    colors: ['#ff4500', '#ffd700'], gravity: 0.6, scalar: 0.8,
+                });
+            }, 150);
+        }
+
+        // 👊 Fist/Smash — screen shake + toned-down fire sparks
+        if (effect === 'smashfire') {
+            const container = document.querySelector('[class*="meetVideoContainer"]');
+            if (container) {
+                container.style.transform = 'translateX(-6px)';
+                setTimeout(() => { container.style.transform = 'translateX(6px)';  }, 50);
+                setTimeout(() => { container.style.transform = 'translateX(-4px)'; }, 100);
+                setTimeout(() => { container.style.transform = 'translateX(4px)';  }, 150);
+                setTimeout(() => { container.style.transform = 'translateX(0px)';  }, 200);
+            }
+
+            const fireEmojis = ['🔥', '💥', '🔥'].map((e, i) => ({
+                id: Date.now() + 300 + i,
+                emoji: e,
+                x: 25 + i * 25 + Math.random() * 8,
+                delay: i * 0.15,
+                size: Math.random() * 1.2 + 2.4,
+            }));
+            setFloatingEmojis(prev => [...prev, ...fireEmojis]);
+            setTimeout(() => {
+                setFloatingEmojis(prev => prev.filter(e => !fireEmojis.find(n => n.id === e.id)));
+            }, 3500);
+
+            confetti({
+                particleCount: 40, angle: 90, spread: 45,
+                origin: { y: 0.95, x: 0.5 },
+                colors: ['#ff4500', '#ff6600', '#ff8c00', '#ffd700'],
+                gravity: 0.55, scalar: 0.9, shapes: ['circle'],
+            });
+            setTimeout(() => {
+                confetti({
+                    particleCount: 20, angle: 75, spread: 35,
+                    origin: { y: 0.95, x: 0.25 },
+                    colors: ['#ff4500', '#ffd700'], gravity: 0.6, scalar: 0.8,
+                });
+                confetti({
+                    particleCount: 20, angle: 105, spread: 35,
+                    origin: { y: 0.95, x: 0.75 },
+                    colors: ['#ff4500', '#ffd700'], gravity: 0.6, scalar: 0.8,
+                });
+            }, 150);
+        }
+
+        // 👋 Wave — barely-there blue sparkle
+        if (effect === 'wave') {
+            confetti({
+                particleCount: 30, spread: 70,
+                origin: { y: 0.5, x: 0.5 },
+                colors: ['#74c0fc', '#a5d8ff', '#e7f5ff', '#4dabf7'],
+                shapes: ['circle'], scalar: 0.75, gravity: 0.4, drift: 0.6,
+            });
+        }
+
+        // 🎊 Celebrate
+        if (effect === 'celebrate') {
+            confetti({ particleCount: 35, angle: 60, spread: 45, origin: { x: 0.1 }, scalar: 0.8 });
+            setTimeout(() => confetti({
+                particleCount: 35, angle: 120, spread: 45, origin: { x: 0.9 }, scalar: 0.8,
+            }), 300);
+        }
+    };
+    // ──────────────────────────────────────────────────────────────────────────
+
+    // ─── Gesture detection ────────────────────────────────────────────────────

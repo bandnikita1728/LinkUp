@@ -799,3 +799,70 @@ export default function VideoMeetComponent() {
             })
     }
 
+    let getUserMediaSuccess = (stream) => {
+        try {
+            window.localStream.getTracks().forEach(track => track.stop())
+        } catch (e) { console.log(e) }
+
+        window.localStream = stream
+        localVideoref.current.srcObject = stream
+        if (confettiEnabledRef.current) {
+            initGestureDetection(stream);
+        }
+
+        for (let id in connections) {
+            if (id === socketIdRef.current) continue
+
+            const senders    = connections[id].getSenders();
+            const videoSender = senders.find(s => s.track && s.track.kind === 'video');
+            const audioSender = senders.find(s => s.track && s.track.kind === 'audio');
+            const videoTrack  = stream.getVideoTracks()[0];
+            const audioTrack  = stream.getAudioTracks()[0];
+
+            if (videoSender && videoTrack) videoSender.replaceTrack(videoTrack);
+            if (audioSender && audioTrack) audioSender.replaceTrack(audioTrack);
+
+            if (!videoSender && !audioSender) {
+                window.localStream.getTracks().forEach(track => {
+                    connections[id].addTrack(track, window.localStream)
+                })
+                connections[id].createOffer().then((description) => {
+                    connections[id].setLocalDescription(description)
+                        .then(() => {
+                            socketRef.current.emit('signal', id, JSON.stringify({ 'sdp': connections[id].localDescription }))
+                        })
+                        .catch(e => console.log(e))
+                })
+            }
+        }
+
+        startSpeakingDetection(stream)
+
+        stream.getTracks().forEach(track => track.onended = () => {
+            setVideo(false);
+            setAudio(false);
+
+            try {
+                let tracks = localVideoref.current.srcObject.getTracks()
+                tracks.forEach(track => track.stop())
+            } catch (e) { console.log(e) }
+
+            let blackSilence = (...args) => new MediaStream([black(...args), silence()])
+            window.localStream = blackSilence()
+            localVideoref.current.srcObject = window.localStream
+
+            for (let id in connections) {
+                window.localStream.getTracks().forEach(track => {
+                    connections[id].addTrack(track, window.localStream)
+                })
+                connections[id].createOffer().then((description) => {
+                    connections[id].setLocalDescription(description)
+                        .then(() => {
+                            socketRef.current.emit('signal', id, JSON.stringify({ 'sdp': connections[id].localDescription }))
+                        })
+                        .catch(e => console.log(e))
+                })
+            }
+        })
+    }
+

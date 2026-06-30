@@ -754,3 +754,11 @@ export default function VideoMeetComponent() {
         }
     }
 
+    const stopTranslation = () => {
+        console.log('[SARVAM] Stopping translation')
+        translationOnRef.current = false
+        setTranslationOn(false)
+        if (translationRecorderRef.current?.state === 'recording') translationRecorderRef.current.stop()
+        setRemoteCaptions({})
+    }
+

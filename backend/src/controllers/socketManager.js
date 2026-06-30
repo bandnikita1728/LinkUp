@@ -44,3 +44,7 @@ export const connectToSocket = (server) => {
             }
         })
 
+        socket.on("signal", (toId, message) => {
+            io.to(toId).emit("signal", socket.id, message);
+        })
+

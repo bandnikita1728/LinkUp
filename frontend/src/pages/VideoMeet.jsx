@@ -115,3 +115,95 @@ export default function VideoMeetComponent() {
         usernameRef.current = username;
     }, [username])
 
+    let [callDuration, setCallDuration] = useState(0)
+    let [copied, setCopied] = useState(false)
+    let [socketUsernames, setSocketUsernames] = useState({})
+    // Corner floating reactions (button / network triggered)
+    let [reactions, setReactions] = useState([])
+    // Full-screen gesture overlay
+    let [gestureReaction, setGestureReaction] = useState(null)
+    // Floating emoji particles (gesture effects)
+    let [floatingEmojis, setFloatingEmojis] = useState([])
+    // Reaction picker panel
+    let [showReactionPicker, setShowReactionPicker] = useState(false)
+    let [confettiEnabled, setConfettiEnabled] = useState(false)
+    const [speakingUsers, setSpeakingUsers] = useState(new Set())
+    const confettiEnabledRef = useRef(false)
+    useEffect(() => { confettiEnabledRef.current = confettiEnabled }, [confettiEnabled])
+
+    const [translationOn, setTranslationOn] = useState(false)
+    const [remoteCaptions, setRemoteCaptions] = useState({})
+    const translationOnRef = useRef(false)
+    const translationRecorderRef = useRef(null)
+
+    const [translationPanelOpen, setTranslationPanelOpen] = useState(false)
+    const [transcriptMessages, setTranscriptMessages] = useState([])
+    const [myLang, setMyLang] = useState('hi-IN')
+    const myLangRef = useRef('hi-IN')
+    const [showInLang, setShowInLang] = useState('en')
+    const showInLangRef = useRef('en')
+    const transcriptEndRef = useRef(null)
+
+    const TRANSLATION_LANGS = [
+        { speak: 'hi-IN', translate: 'hi', label: 'Hindi',   flag: '🇮🇳' },
+        { speak: 'en-US', translate: 'en', label: 'English', flag: '🇺🇸' },
+        { speak: 'ta-IN', translate: 'ta', label: 'Tamil',   flag: '🇮🇳' },
+        { speak: 'te-IN', translate: 'te', label: 'Telugu',  flag: '🇮🇳' },
+        { speak: 'mr-IN', translate: 'mr', label: 'Marathi', flag: '🇮🇳' },
+        { speak: 'bn-IN', translate: 'bn', label: 'Bengali', flag: '🇮🇳' },
+    ]
+
+    useEffect(() => {
+        myLangRef.current = myLang
+    }, [myLang])
+
+    useEffect(() => {
+        showInLangRef.current = showInLang
+    }, [showInLang])
+
+    useEffect(() => {
+        transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [transcriptMessages])
+
+    useEffect(() => {
+        if (!askForUsername && confettiEnabled) {
+            if (window.localStream) {
+                initGestureDetection(window.localStream)
+            }
+        } else {
+            stopGestureDetection()
+        }
+    }, [askForUsername, confettiEnabled])
+
+    // Force re-render of video tiles when username map arrives/updates
+    useEffect(() => {
+        if (Object.keys(socketUsernames).length > 0) {
+            setVideos(prev => prev.map(v => ({ ...v })))
+        }
+    }, [socketUsernames])
+
+    useEffect(() => {
+        if (!askForUsername) {
+            const timer = setInterval(() => {
+                setCallDuration(prev => prev + 1)
+            }, 1000)
+            return () => clearInterval(timer)
+        }
+    }, [askForUsername])
+
+    const formatDuration = (seconds) => {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0')
+        const s = (seconds % 60).toString().padStart(2, '0')
+        return `${m}:${s}`
+    }
+
+    const copyMeetingLink = () => {
+        navigator.clipboard.writeText(window.location.href)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
+    let [recording, setRecording] = useState(false)
+    const mediaRecorderRef = useRef(null)
+    const recordedChunksRef = useRef([])
+

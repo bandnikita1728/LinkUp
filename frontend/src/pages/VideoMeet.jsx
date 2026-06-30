@@ -1167,3 +1167,38 @@ let gotMessageFromServer = (fromId, message) => {
         return Object.assign(stream.getVideoTracks()[0], { enabled: false })
     }
 
+    let handleVideo = () => { setVideo(!video) }
+    let handleAudio = () => {
+        const newAudio = !audio
+        setAudio(newAudio)
+        if (!newAudio) {
+            setSpeakingUsers(prev => {
+                const next = new Set(prev)
+                next.delete(socketIdRef.current)
+                return next
+            })
+            socketRef.current?.emit('speaking', false)
+        }
+    }
+
+    useEffect(() => {
+        if (screen === true) {
+            getDislayMedia();
+        }
+    }, [screen])
+
+    let handleScreen = () => { setScreen(!screen) }
+
+    let handleEndCall = () => {
+        try {
+            stopGestureDetection();
+            if (localVideoref.current && localVideoref.current.srcObject) {
+                localVideoref.current.srcObject.getTracks().forEach(track => track.stop());
+            }
+            if (window.localStream) {
+                window.localStream.getTracks().forEach(track => track.stop());
+            }
+        } catch (e) { console.log(e) }
+        window.location.href = "/";
+    }
+

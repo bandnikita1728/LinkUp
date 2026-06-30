@@ -667,3 +667,23 @@ export default function VideoMeetComponent() {
         }
     }
 
+    const HALLUCINATION_WORDS = ['okay', 'yes', 'hmm', 'uh', 'um', 'ah', 'thank you', 'thanks']
+
+    const isHallucination = (text) => {
+        if (!text || text.trim().length < 3) return true
+        const lower = text.trim().toLowerCase()
+        if (HALLUCINATION_WORDS.includes(lower)) return true
+        if (lower.split(' ').length < 2) return true
+        return false
+    }
+
+    const BLOCKED_WORDS = [
+        'sex', 'sexy', 'porn', 'nude', 'naked',
+    ]
+
+    const containsBlockedWord = (text) => {
+        if (!text) return false
+        const lower = text.toLowerCase()
+        return BLOCKED_WORDS.some(word => lower.includes(word))
+    }
+

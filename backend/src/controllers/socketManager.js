@@ -91,3 +91,16 @@ export const connectToSocket = (server) => {
             }
         })
 
+        socket.on("caption", (text) => {
+            console.log('[BACKEND] Caption relay:', String(text).substring(0, 30))
+            const room = Object.entries(connections).find(([, v]) => v.includes(socket.id))?.[0]
+            if (room) {
+                connections[room].forEach(id => {
+                    if (id !== socket.id) {
+                        console.log('[BACKEND] Relaying to:', id)
+                        io.to(id).emit("caption", text, socket.id)
+                    }
+                })
+            }
+        })
+

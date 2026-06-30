@@ -885,3 +885,53 @@ export default function VideoMeetComponent() {
         }
     }, [video, audio])
 
+    let getDislayMediaSuccess = (stream) => {
+        try {
+            window.localStream.getTracks().forEach(track => track.stop())
+        } catch (e) { console.log(e) }
+
+        window.localStream = stream
+        localVideoref.current.srcObject = stream
+
+        const screenTrack = stream.getVideoTracks()[0];
+        for (let id in connections) {
+            if (id === socketIdRef.current) continue
+            const sender = connections[id].getSenders().find(s => s.track && s.track.kind === 'video');
+            if (sender) {
+                sender.replaceTrack(screenTrack);
+            } else {
+                window.localStream.getTracks().forEach(track => {
+                    connections[id].addTrack(track, window.localStream)
+                })
+                connections[id].createOffer().then((description) => {
+                    connections[id].setLocalDescription(description)
+                        .then(() => {
+                            socketRef.current.emit('signal', id, JSON.stringify({ 'sdp': connections[id].localDescription }))
+                        })
+                        .catch(e => console.log(e))
+                })
+            }
+        }
+
+        screenTrack.onended = () => {
+            setScreen(false)
+            try {
+                let tracks = localVideoref.current.srcObject.getTracks()
+                tracks.forEach(track => track.stop())
+            } catch (e) { console.log(e) }
+
+            let blackSilence = (...args) => new MediaStream([black(...args), silence()])
+            window.localStream = blackSilence()
+            localVideoref.current.srcObject = window.localStream
+            getUserMedia()
+        }
+    }
+
+    let getDislayMedia = () => {
+        if (navigator.mediaDevices.getDisplayMedia) {
+            navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+                .then(getDislayMediaSuccess)
+                .catch((e) => console.log(e))
+        }
+    }
+

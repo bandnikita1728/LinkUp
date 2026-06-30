@@ -207,3 +207,59 @@ export default function VideoMeetComponent() {
     const mediaRecorderRef = useRef(null)
     const recordedChunksRef = useRef([])
 
+    let handleRecording = async () => {
+        if (recording) {
+            mediaRecorderRef.current?.stop()
+            setRecording(false)
+            return
+        }
+
+        try {
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    displaySurface: 'browser',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                audio: true
+            })
+
+            const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
+                ? 'video/webm;codecs=vp9,opus'
+                : MediaRecorder.isTypeSupported('video/webm')
+                ? 'video/webm'
+                : 'video/mp4'
+
+            const recorder = new MediaRecorder(screenStream, { mimeType })
+            const chunks = []
+
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data)
+            }
+
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: mimeType })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `LinkUp-Meeting-${new Date().toISOString().slice(0,19)}.webm`
+                a.click()
+                URL.revokeObjectURL(url)
+                screenStream.getTracks().forEach(t => t.stop())
+            }
+
+            screenStream.getVideoTracks()[0].onended = () => {
+                if (recorder.state === 'recording') recorder.stop()
+                setRecording(false)
+            }
+
+            recorder.start()
+            mediaRecorderRef.current = recorder
+            setRecording(true)
+
+        } catch(e) {
+            console.log('[RECORD] Error:', e)
+            alert('Recording cancelled or not supported')
+        }
+    }
+

@@ -66,3 +66,25 @@ export const detectGesture = (landmarks) => {
         detected = { emoji: '☝️', effect: 'fire', name: 'point' }
     }
 
+    // Must hold same gesture for HOLD_FRAMES before triggering
+    if (detected && detected.name === currentGesture) {
+        gestureFrameCount++
+        if (gestureFrameCount >= HOLD_FRAMES) {
+            gestureFrameCount = 0
+            currentGesture = null
+            console.log('[GESTURE]', detected.name)
+            // Per-gesture cooldown: different gesture fires immediately
+            if (detected.name === lastGesture && now - lastGestureTime < COOLDOWN_MS) {
+                return null
+            }
+            lastGesture = detected.name
+            lastGestureTime = now
+            return detected
+        }
+    } else {
+        currentGesture = detected?.name || null
+        gestureFrameCount = detected ? 1 : 0
+    }
+
+    return null
+}

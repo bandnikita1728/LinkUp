@@ -762,3 +762,40 @@ export default function VideoMeetComponent() {
         setRemoteCaptions({})
     }
 
+    let getMedia = () => {
+        if (socketConnectedRef.current) return
+        setVideo(true)
+        setAudio(true)
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                getUserMediaSuccess(stream)
+                if (!socketConnectedRef.current) {
+                    socketConnectedRef.current = true
+                    connectToSocketServer()
+                }
+                startSpeakingDetection(stream)
+            })
+            .catch(() => {
+                // Camera in use or denied — try audio only
+                navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+                    .then(stream => {
+                        getUserMediaSuccess(stream)
+                        if (!socketConnectedRef.current) {
+                            socketConnectedRef.current = true
+                            connectToSocketServer()
+                        }
+                        startSpeakingDetection(stream)
+                    })
+                    .catch(() => {
+                        // Audio also failed — use silent black stream and continue anyway
+                        console.log('No media devices available, using blank stream')
+                        const blackStream = new MediaStream([black(), silence()])
+                        getUserMediaSuccess(blackStream)
+                        if (!socketConnectedRef.current) {
+                            socketConnectedRef.current = true
+                            connectToSocketServer()
+                        }
+                    })
+            })
+    }
+

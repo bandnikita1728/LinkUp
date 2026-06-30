@@ -49,3 +49,22 @@ var peerConfigConnections = {
     ]
 }
 
+const waitForStream = () => {
+    return new Promise((resolve) => {
+        if (window.localStream && window.localStream.getTracks().length > 0) {
+            return resolve(window.localStream);
+        }
+        let tries = 0;
+        const interval = setInterval(() => {
+            tries++;
+            if (window.localStream && window.localStream.getTracks().length > 0) {
+                clearInterval(interval);
+                resolve(window.localStream);
+            } else if (tries > 100) {
+                clearInterval(interval);
+                resolve(null);
+            }
+        }, 100);
+    });
+};
+

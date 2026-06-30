@@ -488,3 +488,43 @@ export default function VideoMeetComponent() {
         triggerEffectRef.current = triggerEffect
     })
 
+    const initGestureDetection = (stream) => {
+        if (handsRef.current) return;
+        if (gestureInitializedRef.current) return;
+        gestureInitializedRef.current = true;
+
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
+        });
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 0,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.5,
+        });
+        hands.onResults((results) => {
+            if (!results.multiHandLandmarks?.length) {
+                return;
+            }
+            // Always call via ref so we use the latest handleGestureResult,
+            // not the stale closure captured when initGestureDetection first ran
+            handleGestureResultRef.current?.(detectGesture(results.multiHandLandmarks[0]));
+        });
+        handsRef.current = hands;
+
+        const videoEl = gestureVideoRef.current;
+        if (!videoEl) return;
+        videoEl.srcObject = stream;
+        videoEl.play().catch(() => {});
+
+        const camera = new Camera(videoEl, {
+            onFrame: async () => {
+                if (handsRef.current) await handsRef.current.send({ image: videoEl });
+            },
+            width: 320,
+            height: 240,
+        });
+        camera.start();
+        cameraRef.current = camera;
+    };
+

@@ -469,3 +469,22 @@ export default function VideoMeetComponent() {
     // ──────────────────────────────────────────────────────────────────────────
 
     // ─── Gesture detection ────────────────────────────────────────────────────
+    const handleGestureResult = (gesture) => {
+        if (!gesture) return;
+        console.log('[CALLBACK]', gesture.name, 'confettiRef:', confettiEnabledRef.current, 'triggerRef:', !!triggerEffectRef.current)
+
+        // Show overlay + fire effect locally
+        setGestureReaction({ id: Date.now(), emoji: gesture.emoji });
+        setTimeout(() => setGestureReaction(null), 2500);
+
+        if (confettiEnabledRef.current) {
+            triggerEffectRef.current?.(gesture.effect, gesture.emoji)
+        }
+        socketRef.current?.emit('reaction', gesture.emoji, gesture.effect)
+    };
+
+    useEffect(() => {
+        handleGestureResultRef.current = handleGestureResult
+        triggerEffectRef.current = triggerEffect
+    })
+

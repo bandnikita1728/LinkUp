@@ -1202,3 +1202,19 @@ let gotMessageFromServer = (fromId, message) => {
         window.location.href = "/";
     }
 
+    const addMessage = (data, sender, socketIdSender) => {
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: sender, data: data }
+        ]);
+        if (socketIdSender !== socketIdRef.current) {
+            setNewMessages((prev) => prev + 1);
+        }
+    };
+
+    let sendMessage = () => {
+        if (!message.trim()) return;
+        socketRef.current.emit('chat-message', message, usernameRef.current)
+        setMessage("");
+    }
+

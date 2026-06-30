@@ -263,3 +263,26 @@ export default function VideoMeetComponent() {
         }
     }
 
+    const sendReaction = (emoji, effect) => {
+        console.log('Emitting reaction:', emoji, effect)
+        socketRef.current?.emit('reaction', emoji, effect)
+        if (confettiEnabledRef.current && effect) triggerEffectRef.current?.(effect, emoji)
+        setShowReactionPicker(false)
+    }
+
+    // ─── Effect engine ─────────────────────────────────────────────────────────
+    const spawnFloatingEmojis = (emoji, count, durationMs, sizeRange = [1.5, 2.5]) => {
+        const batch = Array.from({ length: count }, (_, i) => ({
+            id: Date.now() + i,
+            emoji,
+            x: Math.random() * 85 + 5,
+            delay: Math.random() * 1.8,
+            size: Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0],
+        }));
+        setFloatingEmojis(prev => [...prev, ...batch]);
+        setTimeout(() => {
+            setFloatingEmojis(prev => prev.filter(e => !batch.find(n => n.id === e.id)));
+        }, durationMs);
+        return batch;
+    };
+

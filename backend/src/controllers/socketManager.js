@@ -73,3 +73,21 @@ export const connectToSocket = (server) => {
             }
         })
 
+        socket.on("speaking", (isSpeaking) => {
+            const room = Object.entries(connections).find(([, v]) => v.includes(socket.id))?.[0]
+            if (room) {
+                connections[room].forEach(id => {
+                    if (id !== socket.id) io.to(id).emit("speaking", socket.id, isSpeaking)
+                })
+            }
+        })
+
+        socket.on("reaction", (emoji, effect) => {
+            const room = Object.entries(connections).find(([, v]) => v.includes(socket.id))?.[0]
+            if (room) {
+                connections[room].forEach(id => {
+                    if (id !== socket.id) io.to(id).emit("reaction", emoji, effect)
+                })
+            }
+        })
+

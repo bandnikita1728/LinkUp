@@ -935,3 +935,179 @@ export default function VideoMeetComponent() {
         }
     }
 
+let connectToSocketServer = () => {
+    setMessages([])
+    setNewMessages(0)
+    setVideos([])
+    videoRef.current = []
+    connections = {}
+    iceCandidateQueue = {}
+    const seenPeers = new Set()
+
+    if (socketRef.current) {
+        socketRef.current.disconnect()
+        socketRef.current = null
+    }
+
+    socketRef.current = io.connect(server_url, { secure: false })
+
+    socketRef.current.on('connect', () => {
+        socketIdRef.current = socketRef.current.id
+        socketRef.current.emit('join-call', window.location.href, usernameRef.current)
+
+        socketRef.current.on('signal', gotMessageFromServer)
+        socketRef.current.on('chat-message', addMessage)
+
+        socketRef.current.on('user-left', (id) => {
+            delete connections[id]
+            setVideos(prev => prev.filter(v => v.socketId !== id))
+        })
+
+        socketRef.current.on('user-joined', async (id, clients, usernamesMap) => {
+            await waitForStream()
+
+            if (usernamesMap) {
+                const fullMap = { ...usernamesMap, [socketIdRef.current]: usernameRef.current }
+                setSocketUsernames(fullMap)
+                socketUsernamesRef.current = fullMap
+            }
+
+            clients.forEach((socketListId) => {
+                if (socketListId === socketIdRef.current) return
+                if (seenPeers.has(socketListId)) return
+                seenPeers.add(socketListId)
+
+                const pc = new RTCPeerConnection(peerConfigConnections)
+                connections[socketListId] = pc
+
+                pc.onconnectionstatechange = () => {
+                    console.log('[PC] Connection state:', pc.connectionState, 'for', socketListId)
+                    if (pc.connectionState === 'failed') {
+                        console.log('[PC] Connection failed, restarting ICE')
+                        pc.restartIce()
+                    }
+                }
+
+                pc.oniceconnectionstatechange = () => {
+                    console.log('[ICE]', socketListId, pc.iceConnectionState)
+                    if (pc.iceConnectionState === 'disconnected') {
+                        setTimeout(() => {
+                            if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+                                console.log('[ICE] Restarting ICE for', socketListId)
+                                pc.restartIce()
+                            }
+                        }, 3000)
+                    }
+                }
+                iceCandidateQueue[socketListId] = []
+
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        socketRef.current.emit('signal', socketListId,
+                            JSON.stringify({ ice: event.candidate }))
+                    }
+                }
+
+                pc.ontrack = (event) => {
+                    const stream = event.streams[0]
+                    if (!stream) return
+                    setVideos(prev => {
+                        if (prev.find(v => v.socketId === socketListId)) {
+                            return prev.map(v =>
+                                v.socketId === socketListId ? { ...v, stream } : v
+                            )
+                        }
+                        return [...prev, { socketId: socketListId, stream }]
+                    })
+                }
+
+                if (window.localStream) {
+                    window.localStream.getTracks().forEach(track =>
+                        pc.addTrack(track, window.localStream)
+                    )
+                }
+
+                if (iceCandidateQueue[socketListId]?.length > 0) {
+                    iceCandidateQueue[socketListId].forEach(c =>
+                        pc.addIceCandidate(new RTCIceCandidate(c)).catch(e => console.log(e))
+                    )
+                    iceCandidateQueue[socketListId] = []
+                }
+            })
+
+            if (id === socketIdRef.current) {
+                for (let id2 in connections) {
+                    if (id2 === socketIdRef.current) continue
+                    connections[id2].createOffer()
+                        .then(desc => connections[id2].setLocalDescription(desc))
+                        .then(() => socketRef.current.emit('signal', id2,
+                            JSON.stringify({ sdp: connections[id2].localDescription })))
+                        .catch(e => console.log(e))
+                }
+            }
+        })
+
+        socketRef.current.on('reaction', (emoji, effect) => {
+            if (!emoji || emoji.length > 10) return
+            if (confettiEnabledRef.current) triggerEffectRef.current?.(effect, emoji)
+        })
+
+        socketRef.current.on('speaking', (socketId, isSpeaking) => {
+            console.log('[SPEAKING] Received from:', socketId, isSpeaking)
+            setSpeakingUsers(prev => {
+                const next = new Set(prev)
+                isSpeaking ? next.add(socketId) : next.delete(socketId)
+                console.log('[SPEAKING] speakingUsers size:', next.size, 'ids:', [...next])
+                return next
+            })
+        })
+
+        socketRef.current.on('caption', (text, fromSocketId) => {
+            if (fromSocketId === socketIdRef.current) return
+            console.log('[CAPTION] Received:', text, 'from:', fromSocketId)
+
+            const senderName = socketUsernamesRef.current[fromSocketId] || 'Participant'
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+            // Feed transcript panel
+            setTranscriptMessages(prev => {
+                const last = prev[prev.length - 1]
+                if (last && last.socketId === fromSocketId) {
+                    const updated = [...prev]
+                    updated[updated.length - 1] = {
+                        ...last,
+                        text: (last.text + ' ' + text).trim().slice(-200)
+                    }
+                    return updated
+                }
+                return [...prev, { id: Date.now(), socketId: fromSocketId, sender: senderName, text, timestamp }]
+            })
+
+            // Update video tile caption
+            setRemoteCaptions(prev => {
+                const existing = prev[fromSocketId] || ''
+                const combined = (existing + ' ' + text).trim()
+                const trimmed = combined.length > 120
+                    ? '...' + combined.slice(-120)
+                    : combined
+                return { ...prev, [fromSocketId]: trimmed }
+            })
+
+            if (captionTimeouts.current[fromSocketId]) {
+                clearTimeout(captionTimeouts.current[fromSocketId])
+            }
+            captionTimeouts.current[fromSocketId] = setTimeout(() => {
+                setRemoteCaptions(prev => {
+                    const next = { ...prev }
+                    delete next[fromSocketId]
+                    return next
+                })
+            }, 8000)
+        })
+
+        socketRef.current.on('disconnect', () => {
+            socketConnectedRef.current = false
+        })
+    })
+}
+

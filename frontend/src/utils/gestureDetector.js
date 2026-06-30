@@ -28,3 +28,23 @@ export const detectGesture = (landmarks) => {
     )
 
     // Finger extended = tip is further from wrist than pip
+    const extended = (tip, pip) => {
+        const tipDist = Math.hypot(tip.x - wrist.x, tip.y - wrist.y)
+        const pipDist = Math.hypot(pip.x - wrist.x, pip.y - wrist.y)
+        return tipDist > pipDist * 1.15
+    }
+
+    const indexUp = extended(indexTip, indexPip)
+    const middleUp = extended(middleTip, middlePip)
+    const ringUp = extended(ringTip, ringPip)
+    const pinkyUp = extended(pinkyTip, pinkyPip)
+
+    // Thumb up = tip significantly above MCP
+    const thumbPointingUp = (thumbTip.y < thumbMcp.y - handSize * 0.4)
+    // Thumb extended sideways
+    const thumbOut = Math.hypot(thumbTip.x - indexPip.x, thumbTip.y - indexPip.y) > handSize * 0.8
+
+    // Finger heart = thumb and index tips very close
+    const fingerHeartDist = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y)
+    const isFingerHeart = fingerHeartDist < handSize * 0.35 && middleUp && ringUp
+

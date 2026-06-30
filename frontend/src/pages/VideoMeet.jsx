@@ -68,3 +68,50 @@ const waitForStream = () => {
     });
 };
 
+const BALLOON_EMOJIS = new Set(['🎈', '🎀', '🎊']);
+const HEART_EMOJIS   = new Set(['❤️', '🩷', '💕', '💗']);
+const FIRE_EMOJIS    = new Set(['🔥', '💥']);
+
+export default function VideoMeetComponent() {
+
+    var socketRef = useRef();
+    let socketIdRef = useRef();
+    let localVideoref = useRef();
+    const gestureVideoRef = useRef();
+    const handsRef = useRef(null);
+    const cameraRef = useRef(null);
+    const handleGestureResultRef = useRef(null); // always points to latest handleGestureResult
+    const triggerEffectRef = useRef(null);        // always points to latest triggerEffect
+    const gestureInitializedRef = useRef(false);
+    const socketConnectedRef = useRef(false);
+    const speakingDetectionRef = useRef(null);
+    const captionTimeouts = useRef({})
+
+    let [videoAvailable, setVideoAvailable] = useState(true);
+    let [audioAvailable, setAudioAvailable] = useState(true);
+    let [video, setVideo] = useState(false);
+    let [audio, setAudio] = useState(false);
+    let [screen, setScreen] = useState(false);
+    let [showModal, setModal] = useState(false);
+    let [screenAvailable, setScreenAvailable] = useState(false);
+    let [messages, setMessages] = useState([])
+    let [message, setMessage] = useState("");
+    let [newMessages, setNewMessages] = useState(0);
+    let [askForUsername, setAskForUsername] = useState(true);
+    let [username, setUsername] = useState("");
+    const usernameRef = useRef("");
+
+    // socketUsernamesRef mirrors state so ontrack closures always read fresh names
+    const socketUsernamesRef = useRef({});
+
+    const videoRef = useRef([])
+    let [videos, setVideos] = useState([])
+
+    useEffect(() => {
+        getPermissions();
+    }, [])
+
+    useEffect(() => {
+        usernameRef.current = username;
+    }, [username])
+

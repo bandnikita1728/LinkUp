@@ -537,3 +537,39 @@ export default function VideoMeetComponent() {
     };
     // ──────────────────────────────────────────────────────────────────────────
 
+    const getPermissions = async () => {
+        try {
+            const videoPermission = await navigator.mediaDevices.getUserMedia({ video: true });
+            if (videoPermission) {
+                setVideoAvailable(true);
+                videoPermission.getTracks().forEach(t => t.stop());
+            } else {
+                setVideoAvailable(false);
+            }
+
+            const audioPermission = await navigator.mediaDevices.getUserMedia({ audio: true });
+            if (audioPermission) {
+                setAudioAvailable(true);
+                audioPermission.getTracks().forEach(t => t.stop());
+            } else {
+                setAudioAvailable(false);
+            }
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                setScreenAvailable(true);
+            } else {
+                setScreenAvailable(false);
+            }
+
+            const userMediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            if (userMediaStream) {
+                window.localStream = userMediaStream;
+                if (localVideoref.current) {
+                    localVideoref.current.srcObject = userMediaStream;
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+

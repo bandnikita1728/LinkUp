@@ -573,3 +573,79 @@ export default function VideoMeetComponent() {
         }
     };
 
+    const startSpeakingDetection = (stream) => {
+        // Stop previous detection loop before starting a new one
+        if (speakingDetectionRef.current) {
+            speakingDetectionRef.current()
+            speakingDetectionRef.current = null
+        }
+
+        if (!stream) return
+
+        const audioTracks = stream.getAudioTracks()
+        if (!audioTracks || audioTracks.length === 0) {
+            console.log('[SPEAKING] No audio tracks in stream, skipping detection')
+            return
+        }
+
+        console.log('[SPEAKING] Starting detection on stream:', stream.id)
+
+        try {
+            const audioContext = new AudioContext()
+            let animFrame
+
+            const startAnalyser = () => {
+                const analyser = audioContext.createAnalyser()
+                analyser.fftSize = 256
+                analyser.smoothingTimeConstant = 0.3
+                const source = audioContext.createMediaStreamSource(stream)
+                source.connect(analyser)
+                const dataArray = new Uint8Array(analyser.frequencyBinCount)
+                let isSpeaking = false
+                let frameCount = 0
+
+                const check = () => {
+                    analyser.getByteFrequencyData(dataArray)
+
+                    const audioTracks = stream.getAudioTracks()
+                    const micEnabled = audioTracks.length > 0 && audioTracks[0].enabled
+                    const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length
+
+                    frameCount++
+                    if (frameCount % 60 === 0) {
+                        console.log('[SPEAKING] avg:', avg.toFixed(2), 'micEnabled:', micEnabled)
+                    }
+
+                    const speaking = micEnabled && avg > 8
+                    if (speaking !== isSpeaking) {
+                        isSpeaking = speaking
+                        console.log('[SPEAKING] State changed:', speaking, 'avg:', avg.toFixed(2))
+                        setSpeakingUsers(prev => {
+                            const next = new Set(prev)
+                            speaking ? next.add(socketIdRef.current) : next.delete(socketIdRef.current)
+                            console.log('[SPEAKING] speakingUsers size:', next.size)
+                            return next
+                        })
+                        socketRef.current?.emit('speaking', speaking)
+                    }
+                    animFrame = requestAnimationFrame(check)
+                }
+                check()
+            }
+
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(startAnalyser)
+            } else {
+                startAnalyser()
+            }
+
+            // Store cleanup so the next call (stream replacement) can tear down this one
+            speakingDetectionRef.current = () => {
+                if (animFrame) cancelAnimationFrame(animFrame)
+                audioContext.close().catch(() => {})
+            }
+        } catch (e) {
+            console.log('[SPEAKING] Error:', e)
+        }
+    }
+

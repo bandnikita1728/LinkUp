@@ -48,3 +48,28 @@ export const connectToSocket = (server) => {
             io.to(toId).emit("signal", socket.id, message);
         })
 
+        socket.on("chat-message", (data, sender) => {
+            const [matchingRoom, found] = Object.entries(connections)
+                .reduce(([room, isFound], [roomKey, roomValue]) => {
+                    if (!isFound && roomValue.includes(socket.id)) {
+                        return [roomKey, true];
+                    }
+                    return [room, isFound];
+                }, ['', false]);
+
+            if (found === true) {
+                if (messages[matchingRoom] === undefined) {
+                    messages[matchingRoom] = []
+                }
+                messages[matchingRoom].push({
+                    'sender': sender,
+                    "data": data,
+                    "socket-id-sender": socket.id
+                })
+                console.log("message", matchingRoom, ":", sender, data)
+                connections[matchingRoom].forEach((elem) => {
+                    io.to(elem).emit("chat-message", data, sender, socket.id)
+                })
+            }
+        })
+

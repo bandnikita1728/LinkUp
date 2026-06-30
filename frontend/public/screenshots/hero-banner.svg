@@ -1,0 +1,264 @@
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" width="900" height="500">
+  <defs>
+    <style>
+      .bg { fill: #0a0a1a; }
+      .card { fill: #12122a; }
+      .green { fill: #4ade80; }
+      .blue { fill: #3b82f6; }
+      .purple { fill: #8b5cf6; }
+      .white { fill: white; }
+      .gray { fill: rgba(255,255,255,0.4); }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+      }
+      @keyframes floatUp {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-120px); opacity: 0; }
+      }
+      @keyframes bar1 {
+        0%, 100% { height: 8px; }
+        50% { height: 28px; }
+      }
+      @keyframes bar2 {
+        0%, 100% { height: 20px; }
+        50% { height: 8px; }
+      }
+      @keyframes bar3 {
+        0%, 100% { height: 14px; }
+        50% { height: 32px; }
+      }
+      @keyframes bar4 {
+        0%, 100% { height: 24px; }
+        50% { height: 10px; }
+      }
+      @keyframes bar5 {
+        0%, 100% { height: 10px; }
+        50% { height: 22px; }
+      }
+      @keyframes speakBorder {
+        0%, 40% { stroke-opacity: 0; }
+        50%, 90% { stroke-opacity: 1; }
+        100% { stroke-opacity: 0; }
+      }
+      @keyframes slideIn {
+        0%, 20% { transform: translateX(320px); opacity: 0; }
+        35%, 100% { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes msgFadeIn1 {
+        0%, 35% { opacity: 0; transform: translateY(10px); }
+        50%, 100% { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes msgFadeIn2 {
+        0%, 55% { opacity: 0; transform: translateY(10px); }
+        70%, 100% { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes thumbsUp {
+        0%, 80% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        85% { opacity: 1; transform: translateY(-5px) rotate(-10deg); }
+        92% { transform: translateY(-10px) rotate(5deg); }
+        100% { transform: translateY(-5px) rotate(0deg); opacity: 1; }
+      }
+      @keyframes confetti1 {
+        0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translate(-40px,-80px) rotate(360deg); opacity: 0; }
+      }
+      @keyframes confetti2 {
+        0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translate(40px,-70px) rotate(-270deg); opacity: 0; }
+      }
+      @keyframes confetti3 {
+        0% { transform: translate(0,0); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translate(20px,-90px) rotate(180deg); opacity: 0; }
+      }
+
+      .speak-border {
+        fill: none;
+        stroke: #4ade80;
+        stroke-width: 3;
+        animation: speakBorder 4s ease-in-out infinite;
+      }
+      .emoji1 { animation: floatUp 3s ease-out 2s infinite; }
+      .emoji2 { animation: floatUp 3s ease-out 2.5s infinite; }
+      .emoji3 { animation: floatUp 3s ease-out 3s infinite; }
+      .b1 { animation: bar1 0.6s ease-in-out infinite; }
+      .b2 { animation: bar2 0.6s ease-in-out 0.1s infinite; }
+      .b3 { animation: bar3 0.6s ease-in-out 0.2s infinite; }
+      .b4 { animation: bar4 0.6s ease-in-out 0.3s infinite; }
+      .b5 { animation: bar5 0.6s ease-in-out 0.4s infinite; }
+      .translation-panel { animation: slideIn 1s ease-out 1s both; }
+      .msg1 { animation: msgFadeIn1 1s ease-out 2s both; }
+      .msg2 { animation: msgFadeIn2 1s ease-out 3.5s both; }
+      .confetti-1 { animation: confetti1 2s ease-out 2s infinite; }
+      .confetti-2 { animation: confetti2 2s ease-out 2.1s infinite; }
+      .confetti-3 { animation: confetti3 2s ease-out 2.2s infinite; }
+      .gesture { animation: thumbsUp 4s ease-in-out 1s infinite; }
+      .pulse-ring {
+        fill: none;
+        stroke: #4ade80;
+        stroke-width: 2;
+        animation: pulse 2s ease-in-out infinite;
+      }
+    </style>
+
+    <linearGradient id="videoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a3e"/>
+      <stop offset="100%" style="stop-color:#0d0d2b"/>
+    </linearGradient>
+    <linearGradient id="videoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e40"/>
+      <stop offset="100%" style="stop-color:#0f0f2e"/>
+    </linearGradient>
+    <clipPath id="tile1clip">
+      <rect x="40" y="80" width="240" height="180" rx="12"/>
+    </clipPath>
+    <clipPath id="tile2clip">
+      <rect x="295" y="80" width="240" height="180" rx="12"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="500" fill="#080818"/>
+
+  <!-- Top bar -->
+  <rect width="900" height="56" fill="#0e0e24"/>
+  <text x="30" y="34" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="white">LinkUp</text>
+
+  <!-- Timer pill -->
+  <rect x="390" y="16" width="120" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+  <text x="450" y="35" font-family="Inter, sans-serif" font-size="13" fill="white" text-anchor="middle">&#x23F1; 12:34</text>
+
+  <!-- Participant count -->
+  <rect x="740" y="16" width="80" height="28" rx="14" fill="rgba(255,255,255,0.08)"/>
+  <text x="780" y="35" font-family="Inter, sans-serif" font-size="13" fill="white" text-anchor="middle">&#x1F465; 2</text>
+
+  <!-- Copy link -->
+  <rect x="830" y="16" width="50" height="28" rx="8" fill="rgba(99,102,241,0.3)"/>
+  <text x="855" y="35" font-family="Inter, sans-serif" font-size="11" fill="#a5b4fc" text-anchor="middle">Copy</text>
+
+  <!-- VIDEO TILE 1 — Nikita (speaking) -->
+  <rect x="40" y="80" width="240" height="180" rx="12" fill="url(#videoGrad1)"/>
+  <circle cx="160" cy="155" r="45" fill="#1e3a5f"/>
+  <circle cx="160" cy="138" r="22" fill="#60a5fa"/>
+  <ellipse cx="160" cy="185" rx="32" ry="20" fill="#60a5fa"/>
+  <rect x="52" y="236" width="80" height="20" rx="6" fill="rgba(0,0,0,0.6)"/>
+  <text x="92" y="250" font-family="Inter, sans-serif" font-size="11" fill="white" text-anchor="middle">Nikita</text>
+  <rect class="speak-border" x="40" y="80" width="240" height="180" rx="12"/>
+  <!-- Sound bars -->
+  <g transform="translate(230, 230)">
+    <rect class="b1" x="0" y="-8" width="4" height="8" rx="2" fill="#4ade80"/>
+    <rect class="b2" x="7" y="-20" width="4" height="20" rx="2" fill="#4ade80"/>
+    <rect class="b3" x="14" y="-14" width="4" height="14" rx="2" fill="#4ade80"/>
+    <rect class="b4" x="21" y="-24" width="4" height="24" rx="2" fill="#4ade80"/>
+    <rect class="b5" x="28" y="-10" width="4" height="10" rx="2" fill="#4ade80"/>
+  </g>
+
+  <!-- VIDEO TILE 2 — Priya -->
+  <rect x="295" y="80" width="240" height="180" rx="12" fill="url(#videoGrad2)"/>
+  <circle cx="415" cy="155" r="45" fill="#3b1f5e"/>
+  <circle cx="415" cy="138" r="22" fill="#c084fc"/>
+  <ellipse cx="415" cy="185" rx="32" ry="20" fill="#c084fc"/>
+  <rect x="307" y="236" width="80" height="20" rx="6" fill="rgba(0,0,0,0.6)"/>
+  <text x="347" y="250" font-family="Inter, sans-serif" font-size="11" fill="white" text-anchor="middle">Priya</text>
+  <!-- Caption overlay -->
+  <rect x="307" y="215" width="216" height="20" rx="6" fill="rgba(0,0,0,0.75)"/>
+  <text x="415" y="229" font-family="Inter, sans-serif" font-size="10" fill="white" text-anchor="middle">&#x928;&#x92E;&#x938;&#x94D;&#x924;&#x947; &#x2192; Hello, how are you?</text>
+
+  <!-- FLOATING EMOJIS -->
+  <text class="emoji1" x="200" y="120" font-size="24">&#x1F389;</text>
+  <text class="emoji2" x="150" y="140" font-size="20">&#x2764;&#xFE0F;</text>
+  <text class="emoji3" x="230" y="100" font-size="22">&#x2728;</text>
+
+  <!-- THUMBS UP GESTURE -->
+  <g class="gesture" transform="translate(60, 180)">
+    <text font-size="36">&#x1F44D;</text>
+  </g>
+
+  <!-- CONFETTI from gesture -->
+  <circle class="confetti-1" cx="100" cy="220" r="5" fill="#f59e0b"/>
+  <rect class="confetti-2" x="110" y="215" width="8" height="8" fill="#ec4899" transform="rotate(45,114,219)"/>
+  <circle class="confetti-3" cx="90" cy="210" r="4" fill="#4ade80"/>
+
+  <!-- TRANSLATION PANEL -->
+  <g class="translation-panel">
+    <rect x="555" y="65" width="310" height="360" rx="14" fill="#0e0e28" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+    <!-- Panel header -->
+    <rect x="555" y="65" width="310" height="48" rx="14" fill="#14143a"/>
+    <rect x="555" y="89" width="310" height="24" fill="#14143a"/>
+    <text x="578" y="96" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="white">&#x1F310; Live Translation</text>
+    <text x="845" y="96" font-family="Inter, sans-serif" font-size="16" fill="rgba(255,255,255,0.5)" text-anchor="middle">&#x2715;</text>
+
+    <!-- Language selectors -->
+    <rect x="570" y="125" width="280" height="36" rx="8" fill="rgba(255,255,255,0.05)"/>
+    <text x="582" y="148" font-family="Inter, sans-serif" font-size="11" fill="rgba(255,255,255,0.5)">&#x1F3A4; I speak:</text>
+    <rect x="648" y="130" width="110" height="26" rx="6" fill="rgba(99,102,241,0.2)" stroke="rgba(99,102,241,0.4)" stroke-width="1"/>
+    <text x="703" y="148" font-family="Inter, sans-serif" font-size="11" fill="#a5b4fc" text-anchor="middle">&#x1F1EE;&#x1F1F3; Hindi</text>
+
+    <rect x="570" y="170" width="280" height="36" rx="8" fill="rgba(255,255,255,0.05)"/>
+    <text x="582" y="193" font-family="Inter, sans-serif" font-size="11" fill="rgba(255,255,255,0.5)">&#x1F441;&#xFE0F; Show in:</text>
+    <rect x="648" y="175" width="110" height="26" rx="6" fill="rgba(99,102,241,0.2)" stroke="rgba(99,102,241,0.4)" stroke-width="1"/>
+    <text x="703" y="193" font-family="Inter, sans-serif" font-size="11" fill="#a5b4fc" text-anchor="middle">&#x1F1FA;&#x1F1F8; English</text>
+
+    <!-- Start button -->
+    <rect x="570" y="215" width="280" height="36" rx="8" fill="rgba(74,222,128,0.15)" stroke="rgba(74,222,128,0.3)" stroke-width="1"/>
+    <text x="710" y="238" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#4ade80" text-anchor="middle">&#x25B6; Start Translation</text>
+
+    <!-- Divider -->
+    <line x1="555" y1="262" x2="865" y2="262" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+    <!-- Message 1 -->
+    <g class="msg1">
+      <rect x="570" y="272" width="280" height="58" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(74,222,128,0.2)" stroke-width="1"/>
+      <rect x="570" y="272" width="3" height="58" rx="2" fill="#4ade80"/>
+      <text x="582" y="290" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#4ade80">&#x1F3A4; Nikita</text>
+      <text x="830" y="290" font-family="Inter, sans-serif" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="end">08:42 PM</text>
+      <text x="582" y="308" font-family="Inter, sans-serif" font-size="11" fill="rgba(255,255,255,0.85)">Hello, how are you?</text>
+      <text x="582" y="322" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">(&#x928;&#x92E;&#x938;&#x94D;&#x924;&#x947;, &#x906;&#x92A; &#x915;&#x948;&#x938;&#x947; &#x939;&#x948;&#x902;?)</text>
+    </g>
+
+    <!-- Message 2 -->
+    <g class="msg2">
+      <rect x="570" y="342" width="280" height="58" rx="10" fill="rgba(255,255,255,0.04)" stroke="rgba(99,102,241,0.2)" stroke-width="1"/>
+      <rect x="570" y="342" width="3" height="58" rx="2" fill="#8b5cf6"/>
+      <text x="582" y="360" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#c084fc">&#x1F3A4; Priya</text>
+      <text x="830" y="360" font-family="Inter, sans-serif" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="end">08:42 PM</text>
+      <text x="582" y="378" font-family="Inter, sans-serif" font-size="11" fill="rgba(255,255,255,0.85)">I am doing well, thanks!</text>
+      <text x="582" y="392" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">(&#x92E;&#x948;&#x902; &#x920;&#x940;&#x915; &#x939;&#x942;&#x901;, &#x927;&#x928;&#x94D;&#x92F;&#x935;&#x93E;&#x926;!)</text>
+    </g>
+  </g>
+
+  <!-- CONTROL BAR -->
+  <rect x="0" y="430" width="900" height="70" fill="#0e0e24"/>
+
+  <!-- Mic -->
+  <circle cx="340" cy="465" r="22" fill="rgba(255,255,255,0.08)"/>
+  <text x="340" y="473" font-family="Inter, sans-serif" font-size="18" text-anchor="middle">&#x1F3A4;</text>
+
+  <!-- Camera -->
+  <circle cx="400" cy="465" r="22" fill="rgba(255,255,255,0.08)"/>
+  <text x="400" y="473" font-family="Inter, sans-serif" font-size="18" text-anchor="middle">&#x1F4F9;</text>
+
+  <!-- Screen share -->
+  <circle cx="460" cy="465" r="22" fill="rgba(255,255,255,0.08)"/>
+  <text x="460" y="473" font-family="Inter, sans-serif" font-size="16" text-anchor="middle">&#x1F5A5;</text>
+
+  <!-- Reactions -->
+  <circle cx="520" cy="465" r="22" fill="rgba(255,255,255,0.08)"/>
+  <text x="520" y="473" font-family="Inter, sans-serif" font-size="18" text-anchor="middle">&#x1F60A;</text>
+
+  <!-- Translation (active) -->
+  <circle cx="580" cy="465" r="22" fill="rgba(74,222,128,0.15)" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="580" y="473" font-family="Inter, sans-serif" font-size="16" text-anchor="middle">&#x1F310;</text>
+
+  <!-- End call -->
+  <circle cx="640" cy="465" r="22" fill="#ef4444"/>
+  <text x="640" y="473" font-family="Inter, sans-serif" font-size="18" text-anchor="middle">&#x1F4F5;</text>
+
+  <!-- Tech stack labels -->
+  <text x="450" y="498" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.25)" text-anchor="middle">WebRTC &#x2022; Sarvam AI &#x2022; MediaPipe &#x2022; Socket.IO &#x2022; Node.js</text>
+</svg>
